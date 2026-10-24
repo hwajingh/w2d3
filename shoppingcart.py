@@ -1,4 +1,8 @@
-from IPython.display import clear_output
+try:
+    from IPython.display import clear_output
+except ImportError:  # FIX: allow running outside a notebook
+    def clear_output():
+        pass
 
 # Ask the user 5 bits of input: Do you want to : Show/Add/Delete/clear or Quit?
 
@@ -6,20 +10,23 @@ def shoppingcart():
     emptyset = set() 
     
     while True:
-        move = input("Do you want to : Show/Add/Delete/clear or Quit? ")
-        if move.lower() == 'show':
+        # FIX: normalise the command once, instead of move.lower() five times.
+        move = input("Do you want to : Show/Add/Delete/clear or Quit? ").strip().lower()
+        if move == 'show':
             print(f"The shopping list has: ")
             for x in emptyset:
                 print(x,  end =" ")
-        elif move.lower() == "add":
+        elif move == "add":
             item = input("what to add? ")
             emptyset.add(item)
-        elif move.lower()== "delete":
+        elif move == "delete":
             rm = input("what to remove ")
-            emptyset.remove(rm)
-        elif move.lower()=="clear":
+            # FIX: discard() instead of remove() — removing a missing item
+            # used to raise KeyError.
+            emptyset.discard(rm)
+        elif move == "clear":
             emptyset.clear()
-        elif move.lower() == 'quit':
+        elif move == 'quit':
             print(f"The list has: ")
             for stuff in emptyset:
                 print(stuff,  end =" ")
